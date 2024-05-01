@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>Электронный дневник</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="#upload">Загрузить файл</a></li>
+            <li><a href="#update">Редактировать</a></li>
+            <li><a href="#table-stats">Статистика таблицей</a></li>
+            <li><a href="#graph-stats">Статистика графиком</a></li>
+            <li><a href="#help">Помощь</a></li>
+            <li><a href="#about">О сайте</a></li>
+        </ul>
+    </nav>
+    
+    <section id="upload" class="content-section">
+        <h2>Загрузить файл</h2>
+        <input type="file" id="file-input" accept=".csv, .txt" style="display: none;">
+        <button id="upload-button">Выбрать файл</button>
+        <button id="download-data-button">Скачать таблицу</button>
+
+        <div id="data-preview">
+        </div>
+    </section>
+    
+    <section id="update" class="content-section" style="display: none;">
+        <h2>Добавить ученика</h2>
+        <form id="student-form">
+            <input type="text" id="student-name" placeholder="ФИО ученика" required>
+            <input type="text" id="student-class" placeholder="Класс" required>
+            <input type="text" id="student-class" placeholder="Оецнка по физке" required>
+            <input type="text" id="student-class" placeholder="Оецнка по биологии" required>
+            <input type="text" id="student-class" placeholder="Оецнка по математике" required>
+            <input type="text" id="student-class" placeholder="Оецнка по литературе" required>
+            <input type="text" id="student-class" placeholder="Оецнка по физкультуре" required>
+            <button type="button" onclick="addOrUpdateStudent()">Сохранить</button>
+        </form>
+    </section>
+
+
+    <section id="table-stats" class="content-section" style="display: none;">
+        <h2>Статистика таблицей</h2>
+
+    </section>
+
+    <section id="graph-stats" class="content-section" style="display: none;">
+        <h2>Статистика графиом</h2>
+        <div id="charts">
+            <canvas id="class-chart" width="400" height="200"></canvas>
+            <canvas id="student-chart" width="400" height="200"></canvas>
+        </div>
+    </section>
+
+    <section id="help" class="content-section content-section2" style="display: none;">
+            <h2>Помощь</h2>
+            <p>Журнал оценок</p>
+            <h3>Загрузить оценки</h3>
+            <p>Тут можно загрузить журнал оценок</p>
+            <h3>Редактировать журнал</h3>
+            <p>Тут можно редактировать журнал оценок</p>
+            <h3>Статистика в таблице</h3>
+            <p>Отображает статистику таблицей</p>
+            <h3>Статистика графиком</h3>
+            <p>Отображает статистику графиком</p>
+        </section>
+    </section>
+
+    <section id="about" class="content-section content-section2" style="display: none;">
+        <h2>О программе</h2>
+        <p>Выполнил: </p> <p> Зинаков Никита Андреевич </p>
+        <img src="Fotka.jpg">
+    </section>
+</body>
+</html>
