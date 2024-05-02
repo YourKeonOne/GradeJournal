@@ -318,7 +318,7 @@ function createClassChart(statistics) {
 
     // Создаем график
     window.classChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: classData,
         options: {
             scales: {
@@ -359,7 +359,7 @@ function createStudentChart(studentStatistics) {
 
     // Создаем график
     window.studentChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: studentData,
         options: {
             scales: {
