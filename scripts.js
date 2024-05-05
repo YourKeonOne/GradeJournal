@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const dataPreview = document.getElementById('data-preview');
 
     uploadButton.addEventListener('click', () => {
-        fileInput.click();
+        fileInput.click(); // Инициируем клик по скрытому инпуту
     });
 
     fileInput.addEventListener('change', () => {
@@ -52,8 +52,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
         html += '</table>';
         dataPreview.innerHTML = html;
+        // Функция после отображения таблицы
         setupDeleteButtons();
     }
+    
+
+    
 });
 
 // Функция для переключения вкладок и вызова генерации статистики при необходимости
@@ -96,15 +100,36 @@ document.querySelectorAll('nav ul li a').forEach(link => {
     });
 });
 
+// Устанавливаем событие onClick для каждой вкладки в навигации
+document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault(); // Отменить стандартное поведение ссылок
+        var tabName = this.getAttribute('href').substring(1);
+        openTab(tabName); // Изменено на вызов openTab с текущим tabName
+    });
+});
+
+// Устанавливаем событие onClick для каждой вкладки в навигации
+document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault(); // Отменить стандартное поведение ссылок
+        var tabName = this.getAttribute('href').substring(1);
+        openTab(tabName);
+    });
+});
+
+// Показать первую вкладку при загрузке страницы
+openTab('upload');
+
 function addOrUpdateStudent() {
     // Получение данных из формы
     const name = document.getElementById('student-name').value.trim();
     const studentClass = document.getElementById('student-class').value.trim();
-    const gradePhysics = document.getElementById('grade-Physics').value;
-    const gradeBiology = document.getElementById('grade-Biology').value;
+    const gradePhysics = document.getElementById('grade-physics').value;
+    const gradeBiology = document.getElementById('grade-biology').value;
     const gradeMath = document.getElementById('grade-math').value;
     const gradeLiterature = document.getElementById('grade-literature').value;
-    const gradephisicaledc = document.getElementById('grade-phisicaledc').value;
+    const gradeChemistry = document.getElementById('grade-chemistry').value;
 
     // Проверка заполнения ФИО и класса
     if (!name || !studentClass) {
@@ -123,7 +148,7 @@ function addOrUpdateStudent() {
         existingRow.cells[3].textContent = gradeBiology;
         existingRow.cells[4].textContent = gradeMath;
         existingRow.cells[5].textContent = gradeLiterature;
-        existingRow.cells[6].textContent = gradephisicaledc;
+        existingRow.cells[6].textContent = gradeChemistry;
     } else {
         // Добавление новой строки
         const newRow = table.insertRow(-1); // Вставка строки в конец таблицы
@@ -133,12 +158,14 @@ function addOrUpdateStudent() {
         newRow.insertCell(3).textContent = gradeBiology;
         newRow.insertCell(4).textContent = gradeMath;
         newRow.insertCell(5).textContent = gradeLiterature;
-        newRow.insertCell(6).textContent = gradephisicaledc;
+        newRow.insertCell(6).textContent = gradeChemistry;
         const deleteCell = newRow.insertCell(7);
         deleteCell.innerHTML = `<button class="delete-btn" onclick="deleteRow(this)">Удалить</button>`;
     }
+
     // Очистка формы после добавления/обновления
     document.getElementById('student-form').reset();
+    
     generateStatistics();
 }
 
@@ -297,7 +324,7 @@ function createClassChart(statistics) {
     };
 
     // Добавляем данные для каждого предмета
-    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Физкультруа'];
+    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Химия'];
     subjects.forEach((subject, index) => {
         const dataset = {
             label: subject,
@@ -338,7 +365,7 @@ function createStudentChart(studentStatistics) {
     };
 
     // Добавляем данные для каждого предмета
-    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Физкультруа'];
+    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Химия'];
     subjects.forEach((subject, index) => {
         const dataset = {
             label: subject,
@@ -371,7 +398,6 @@ function createStudentChart(studentStatistics) {
     });
 }
 
-
 function displayStatistics(statistics, studentStatistics) {
     const statsSection = document.getElementById('table-stats');
     let html = '<table class="table-stat">';
@@ -390,7 +416,7 @@ function displayStatistics(statistics, studentStatistics) {
     html += '</tr></thead><tbody>';
 
     // Названия предметов
-    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Физкультруа'];
+    const subjects = ['Физика', 'Биология', 'Математика', 'Литература', 'Химия'];
 
     // Заполнение таблицы данными
     for (let classInfo of Object.keys(statistics)) {
@@ -512,13 +538,18 @@ function downloadFile(filename, content, mimeType) {
     URL.revokeObjectURL(url);
 }
 
-// Функция для скачивания таблицы
+// Функция для скачивания таблицы в различных форматах
 function downloadTableData() {
     const table = document.getElementById('students-table');
     if (table) {
         // Строка таблицы для TXT
         const txtData = tableToDataString(table, ';', '\r\n'); 
         downloadFile('data.txt', txtData, 'text/plain;charset=utf-8');
+
+        // Строка таблицы для CSV
+        const csvData = tableToDataString(table, ';', '\r\n'); 
+        downloadFile('data.csv', csvData, 'text/csv;charset=utf-8');
+
     }
 }
 

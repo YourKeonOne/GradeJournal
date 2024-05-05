@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <title>Электронный дневник</title>
+    <title>Журнал оценок</title>
     <link rel="stylesheet" href="styles.css">
     <script src="scripts.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
 </head>
-
 <body>
     <nav>
         <ul>
-            <li><a href="#upload">Загрузить файл</a></li>
-            <li><a href="#update">Редактировать</a></li>
+            <li><a href="#upload">Загрузика</a></li>
+            <li><a href="#edit-section">Редактирование</a></li>
             <li><a href="#table-stats">Статистика таблицей</a></li>
             <li><a href="#graph-stats">Статистика графиком</a></li>
             <li><a href="#help">Помощь</a></li>
@@ -22,37 +20,38 @@
     </nav>
     
     <section id="upload" class="content-section">
-        <h2>Загрузить файл</h2>
+        <h2>Загрузить оценки</h2>
         <input type="file" id="file-input" accept=".csv, .txt" style="display: none;">
-        <button id="upload-button">Выбрать файл</button>
-        <button id="download-data-button">Скачать таблицу</button>
+        <button id="upload-button">Выбрать и загрузить файл</button>
+        <button id="download-data-button">Скачать данные</button>
 
         <div id="data-preview">
+            
         </div>
     </section>
     
-    <section id="update" class="content-section" style="display: none;">
-        <h2>Добавить ученика</h2>
+    <section id="edit-section" class="content-section" style="display: none;">
+        <h2>Добавить или редактировать ученика</h2>
         <form id="student-form">
             <input type="text" id="student-name" placeholder="ФИО ученика" required>
             <input type="text" id="student-class" placeholder="Класс" required>
-            <input type="text" id="student-class" placeholder="Оецнка по физке" required>
-            <input type="text" id="student-class" placeholder="Оецнка по биологии" required>
-            <input type="text" id="student-class" placeholder="Оецнка по математике" required>
-            <input type="text" id="student-class" placeholder="Оецнка по литературе" required>
-            <input type="text" id="student-class" placeholder="Оецнка по физкультуре" required>
+            <input type="number" id="grade-physics" placeholder="Оценка по Физике" min="1" max="5">
+            <input type="number" id="grade-biology" placeholder="Оценка по Биологии" min="1" max="5">
+            <input type="number" id="grade-math" placeholder="Оценка по Математике" min="1" max="5">
+            <input type="number" id="grade-literature" placeholder="Оценка по Литературе" min="1" max="5">
+            <input type="number" id="grade-chemistry" placeholder="Оценка по Химии" min="1" max="5">
             <button type="button" onclick="addOrUpdateStudent()">Сохранить</button>
         </form>
     </section>
 
 
     <section id="table-stats" class="content-section" style="display: none;">
-        <h2>Статистика таблицей</h2>
-
+        <h2>Статистика (таблица)</h2>
+        
     </section>
 
     <section id="graph-stats" class="content-section" style="display: none;">
-        <h2>Статистика графиом</h2>
+        <h2>Статистика в графиках</h2>
         <div id="charts">
             <canvas id="class-chart" width="400" height="200"></canvas>
             <canvas id="student-chart" width="400" height="200"></canvas>
@@ -61,21 +60,22 @@
 
     <section id="help" class="content-section content-section2" style="display: none;">
             <h2>Помощь</h2>
-            <p>Журнал оценок</p>
-            <h3>Загрузить оценки</h3>
-            <p>Тут можно загрузить журнал оценок</p>
-            <h3>Редактировать журнал</h3>
-            <p>Тут можно редактировать журнал оценок</p>
-            <h3>Статистика в таблице</h3>
-            <p>Отображает статистику таблицей</p>
+            <h3>Загрузка</h3>
+            <p>Загрузка файла</p>
+            <h3>Редактирование</h3>
+            <p>Редактирование</p>
+            <h3>Статистика таблицей</h3>
+            <p>Статистика таблицей</p>
             <h3>Статистика графиком</h3>
-            <p>Отображает статистику графиком</p>
+            <p>Статистика графиками</p>
+            <h3>О программе</h3>
+            <p>О программе</p>
         </section>
     </section>
 
     <section id="about" class="content-section content-section2" style="display: none;">
         <h2>О программе</h2>
-        <p>Выполнил: </p> <p> Зинаков Никита Андреевич </p>
+        <p>Выполнил: </p> <p> Зинаков Никита </p>
         <img src="Fotka.jpg">
     </section>
 </body>
