@@ -3,6 +3,8 @@ library(shinydashboard)
 library(readr)
 library(readxl)
 library(DT)
+library(dplyr)
+library(ggplot2)
 
 ui <- dashboardPage(
   skin = "purple",
@@ -89,7 +91,39 @@ ui <- dashboardPage(
           actionButton("saveAsCsv", "Сохранить как CSV"), # Новая кнопка для сохранения в CSV
           actionButton("saveAsXlsx", "Сохранить как XLSX"), # Новая кнопка для сохранения в XLSX
           actionButton("saveAsTxt", "Сохранить как TXT"), # Новая кнопка для сохранения в TXT
-          textInput("fileName", "Введите название файла для сохранения", value = "table")
+          textInput("fileName", "Введите название файла для сохранения", value = "table"),
+        )
+      ),
+      tabItem(# Вкладка "статистика таблицей"
+        tabName = "table-stats",
+        tabBox(
+          id = "tabset1",
+          title = "Статистика",
+          width = 12,
+          tabPanel(
+            "По классам и предметам",
+            DT::dataTableOutput("statsTable")
+          ),
+          tabPanel(
+            "По предметам",
+            DT::dataTableOutput("subjectStatsTable")
+          )
+        )
+      ),
+      tabItem(#Вкладка "статистика графиком"
+        tabName = "graph-stats",
+        tabBox(
+          id = "tabset1",
+          title = "Статистика",
+          width = 12,
+          tabPanel(
+            "По классам и предметам",
+            plotOutput("classSubjectStatsPlot")
+          ),
+          tabPanel(
+            "По предметам",
+            plotOutput("subjectStatsPlot")
+          )
         )
       )
     )
@@ -197,6 +231,206 @@ server <- function(input, output) {
       showNotification("Таблица сохранена как TXT", type = "message")
     } else {
       showNotification("Нет данных для сохранения", type = "error")
+    }
+  })
+  
+  output$statsTable <- DT::renderDataTable({
+    data <- tableData()
+    
+    if (!is.null(data)) {
+      # Выберем только колонки с предметами и классом
+      subject_columns <- c("informatics", "physics", "mathemathics", "literature", "music")
+      class_column <- "class"
+      
+      # Создадим пустой датафрейм для хранения статистики
+      stats_data <- data.frame(
+        Class = character(),
+        Subject = character(),
+        Grade = numeric(),
+        Average = numeric(),
+        Median = numeric(),
+        Count = numeric(),
+        Percentage = numeric(),
+        stringsAsFactors = FALSE
+      )
+      
+      # Вычислим статистику для каждого класса и предмета
+      for (class in unique(data[[class_column]])) {
+        for (subject in subject_columns) {
+          subject_data <- data[data[[class_column]] == class, subject, drop = TRUE]
+          for (grade in unique(subject_data)) {
+            count <- sum(subject_data == grade)
+            percentage <- count / length(subject_data) * 100
+            stats_data <- rbind(stats_data, data.frame(
+              Class = class,
+              Subject = subject,
+              Grade = grade,
+              Average = mean(subject_data, na.rm = TRUE),
+              Median = median(subject_data, na.rm = TRUE),
+              Count = count,
+              Percentage = percentage,
+              stringsAsFactors = FALSE
+            ))
+          }
+        }
+      }
+      
+      # Отсортируем данные по классу и предмету
+      stats_data <- stats_data[order(stats_data$Class, stats_data$Subject, stats_data$Grade), ]
+      
+      # Вернем датафрейм в виде таблицы
+      DT::datatable(stats_data, options = list(pageLength = 10))
+    } else {
+      DT::datatable(NULL)
+    }
+  })
+  
+  output$subjectStatsTable <- DT::renderDataTable({
+    data <- tableData()
+    
+    if (!is.null(data)) {
+      # Выберем только колонки с предметами и классом
+      subject_columns <- c("informatics", "physics", "mathemathics", "literature", "music")
+      
+      # Создадим пустой датафрейм для хранения статистики
+      stats_data <- data.frame(
+        Subject = character(),
+        Average = numeric(),
+        Median = numeric(),
+        Count = numeric(),
+        Percentage = numeric(),
+        stringsAsFactors = FALSE
+      )
+      
+      # Вычислим статистику для каждого предмета
+      for (subject in subject_columns) {
+        subject_data <- data[[subject]]
+        for (grade in unique(subject_data)) {
+          count <- sum(subject_data == grade)
+          percentage <- count / length(subject_data) * 100
+          stats_data <- rbind(stats_data, data.frame(
+            Subject = subject,
+            Grade = grade,
+            Average = mean(subject_data, na.rm = TRUE),
+            Median = median(subject_data, na.rm = TRUE),
+            Count = count,
+            Percentage = percentage,
+            stringsAsFactors = FALSE
+          ))
+        }
+      }
+      
+      # Отсортируем данные по предмету
+      stats_data <- stats_data[order(stats_data$Subject, stats_data$Grade), ]
+      
+      # Вернем датафрейм в виде таблицы
+      DT::datatable(stats_data, options = list(pageLength = 10))
+    } else {
+      DT::datatable(NULL)
+    }
+  })
+  
+  output$classSubjectStatsPlot <- renderPlot({
+    data <- tableData()
+    
+    if (!is.null(data)) {
+      # Выберем только колонки с предметами и классом
+      subject_columns <- c("informatics", "physics", "mathemathics", "literature", "music")
+      class_column <- "class"
+      
+      # Создадим пустой датафрейм для хранения статистики
+      stats_data <- data.frame(
+        Class = character(),
+        Subject = character(),
+        Grade = numeric(),
+        Average = numeric(),
+        Median = numeric(),
+        Count = numeric(),
+        Percentage = numeric(),
+        stringsAsFactors = FALSE
+      )
+      
+      # Вычислим статистику для каждого класса и предмета
+      for (class in unique(data[[class_column]])) {
+        for (subject in subject_columns) {
+          subject_data <- data[data[[class_column]] == class, subject, drop = TRUE]
+          for (grade in unique(subject_data)) {
+            count <- sum(subject_data == grade)
+            percentage <- count / length(subject_data) * 100
+            stats_data <- rbind(stats_data, data.frame(
+              Class = class,
+              Subject = subject,
+              Grade = grade,
+              Average = mean(subject_data, na.rm = TRUE),
+              Median = median(subject_data, na.rm = TRUE),
+              Count = count,
+              Percentage = percentage,
+              stringsAsFactors = FALSE
+            ))
+          }
+        }
+      }
+      
+      # Отсортируем данные по классу и предмету
+      stats_data <- stats_data[order(stats_data$Class, stats_data$Subject, stats_data$Grade), ]
+      
+      # Создадим график
+      ggplot(stats_data, aes(x = Grade, y = Count, fill = Subject)) +
+        geom_bar(stat = "identity", position = "dodge") +
+        facet_wrap(~ Class) +
+        labs(x = "Оценка", y = "Количество", fill = "Предмет") +
+        theme_minimal()
+    } else {
+      plot(0, 0, type = "n", axes = FALSE, xlab = "", ylab = "")
+    }
+  })
+  
+  output$subjectStatsPlot <- renderPlot({
+    data <- tableData()
+    
+    if (!is.null(data)) {
+      # Выберем только колонки с предметами и классом
+      subject_columns <- c("informatics", "physics", "mathemathics", "literature", "music")
+      
+      # Создадим пустой датафрейм для хранения статистики
+      stats_data <- data.frame(
+        Subject = character(),
+        Grade = numeric(),
+        Average = numeric(),
+        Median = numeric(),
+        Count = numeric(),
+        Percentage = numeric(),
+        stringsAsFactors = FALSE
+      )
+      
+      # Вычислим статистику для каждого предмета
+      for (subject in subject_columns) {
+        subject_data <- data[[subject]]
+        for (grade in unique(subject_data)) {
+          count <- sum(subject_data == grade)
+          percentage <- count / length(subject_data) * 100
+          stats_data <- rbind(stats_data, data.frame(
+            Subject = subject,
+            Grade = grade,
+            Average = mean(subject_data, na.rm = TRUE),
+            Median = median(subject_data, na.rm = TRUE),
+            Count = count,
+            Percentage = percentage,
+            stringsAsFactors = FALSE
+          ))
+        }
+      }
+      
+      # Отсортируем данные по предмету
+      stats_data <- stats_data[order(stats_data$Subject, stats_data$Grade), ]
+      
+      # Создадим график
+      ggplot(stats_data, aes(x = Grade, y = Count, fill = Subject)) +
+        geom_bar(stat = "identity", position = "dodge") +
+        labs(x = "Оценка", y = "Количество", fill = "Предмет") +
+        theme_minimal()
+    } else {
+      plot(0, 0, type = "n", axes = FALSE, xlab = "", ylab = "")
     }
   })
   
